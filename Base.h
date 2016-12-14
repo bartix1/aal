@@ -23,6 +23,7 @@ protected:
 
 private:
 	std::string sortLastSixBody(std::string text, const std::string &, std::vector<std::string>, std::string);
+	std::string sortLastSixBodyWithTrace(std::string, const std::string &, std::vector<std::string>, std::string);
 	std::vector<std::string> moves_history;
 	bool trace;
 };

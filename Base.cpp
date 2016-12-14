@@ -19,29 +19,39 @@ std::string Base::sortLastSix(std::string &text, const std::string & prefix)
 	std::vector<std::string> route;
 	std::string beg = text.substr(0, text.length() - 6);
 	std::string last_six = text.substr(text.length() - 6);
+	if(trace)
+		return sortLastSixBodyWithTrace(last_six, prefix, route, beg);
 	return sortLastSixBody(last_six, prefix, route, beg);
 }
 
 
 std::string Base::sortLastSixBody(std::string text, const std::string & prefix, std::vector<std::string> route, std::string beg)
 {
-	/*for (int i = 0; i < 2; ++i)
+	std::unordered_map<std::string, int> memory;
+	std::deque<std::string> open_nodes;
+	open_nodes.push_back(text);
+	while (!open_nodes.empty())
 	{
-		std::string tmp(text);
-		move(tmp, i, false);
-		if (tmp.substr(0, prefix.size()) == prefix)
-			return tmp;
-		if (memory.find(tmp) != memory.end())
+		text = open_nodes.front();
+		open_nodes.pop_front();
+		if (text.substr(0, prefix.size()) == prefix)
+			return beg + text;
+		if (memory.find(text) != memory.end())
 			continue;
-		else
-		{
-			memory.emplace(std::make_pair(tmp, 0));
-			tmp = sortSixBody(tmp, prefix, memory);
-			if (tmp != "")
-				return tmp;
-		}
+		memory.emplace(std::make_pair(text, 0));
+		std::string tmp(text);
+		move(tmp, 0, false);
+		open_nodes.push_back(tmp);
+		tmp = text;
+		move(tmp, 1, false);
+		open_nodes.push_back(tmp);
 	}
-	return "";*/
+	throw;
+}
+
+
+std::string Base::sortLastSixBodyWithTrace(std::string text, const std::string & prefix, std::vector<std::string> route, std::string beg)
+{
 	std::unordered_map<std::string, int> memory;
 	std::deque<std::string> open_nodes;
 	std::deque<std::vector<std::string>> routes;
@@ -80,10 +90,12 @@ std::string Base::sortLastSixBody(std::string text, const std::string & prefix, 
 }
 
 
-void Base::move(std::string & text, int pos, bool record)
+
+
+void Base::move(std::string & text, int pos, bool valid)
 {
 	text = text.substr(0, pos) + text.substr(pos + 4) + text.substr(pos, 4);
-	if (record)
+	if (trace && valid)
 		moves_history.push_back(text);
 }
 

@@ -50,7 +50,7 @@ int main(int argc, char ** argv)
 	} */
 	std::string shelf = "CMKCMYYYK";
 	Robot r(shelf);
-	Second s(shelf);
+	Second s(shelf, true);
 	std::string res1 = r.sortCMYK();
 	std::string res2 = s.sortCMYK();
 	checkIfCorrect(shelf, res1);
