@@ -46,7 +46,7 @@ std::string Base::sortLastSixBody(std::string text, const std::string & prefix, 
 		move(tmp, 1, false);
 		open_nodes.push_back(tmp);
 	}
-	throw;
+	throw MyException(shelf, text, prefix, beg);
 }
 
 
@@ -106,7 +106,7 @@ std::string Base::lessThanSixSort()
 	if (shelf.length() == 4 && shelf == "CMYK")
 		return shelf;
 	if (shelf.length() == 4 && shelf != "CMYK")
-		throw ;
+		return shelf;
 	if (shelf.length() == 5)
 	{
 		std::string text(shelf);
@@ -120,7 +120,7 @@ std::string Base::lessThanSixSort()
 		}
 		moves_history.clear();
 		moves_history.push_back(shelf);
-		throw;
+		return shelf;
 	}
 
 		

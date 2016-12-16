@@ -23,6 +23,33 @@ std::pair<std::string, std::vector<int>> getResult(std::string shelf)
 
 void checkIfCorrect(std::string shelf, std::string sorted)
 {
+	if (shelf.length() <= 4)
+	{
+		assert(true);
+		return;
+	}
+	if (shelf.length() == 5)
+	{
+		bool pos = true;
+		for (int i = 0; i < 5; ++i)
+		{
+			for (int j = 0; j < 4; ++j)
+				if (shelf[(i + j) % 5] != ORDER[j])
+				{
+					pos = false;
+					break;
+				}
+			if (pos)
+			{
+				std::string tmp = "CMYK" + shelf.substr((i-1)%5,1);
+				assert(sorted == tmp);
+				return;
+			}
+			pos = true;
+		}
+		assert(true);
+		return;
+	}
 	std::pair<std::string, std::vector<int>> tmp = getResult(shelf);
 	assert(sorted.substr(0, tmp.first.length()) == tmp.first);
 	std::string tip = sorted.substr(tmp.first.length());
@@ -35,29 +62,26 @@ void checkIfCorrect(std::string shelf, std::string sorted)
 
 int main(int argc, char ** argv)
 {
-/*	Generator gen;
-	gen.setLength(1000);
-	for(int i =0; i < 100; ++i)
+	try {
+		Generator gen;
+		gen.setLength(5);
+		for (int i = 0; i < 1000; ++i)
+		{
+			std::string shelf = gen.generate();
+			Robot r(shelf);
+			Second s(shelf);
+			std::string res1 = r.sortCMYK();
+			std::string res2 = s.sortCMYK();
+			checkIfCorrect(shelf, res1);
+			checkIfCorrect(shelf, res2);
+			if(i%10 == 0)
+				std::cout << i/10 + 1 << "% completed...\n";
+		}
+	}
+	catch (MyException e)
 	{
-		std::string shelf = gen.generate();
-		Robot r(shelf);
-		Second s(shelf);
-		std::string res1 = r.sortCMYK();
-		std::string res2 = s.sortCMYK();
-		checkIfCorrect(shelf, res1);
-		checkIfCorrect(shelf, res2);
-		std::cout << i+1  << "% completed...\n";
-	} */
-	std::string shelf = "CMKCMYYYK";
-	Robot r(shelf);
-	Second s(shelf, true);
-	std::string res1 = r.sortCMYK();
-	std::string res2 = s.sortCMYK();
-	checkIfCorrect(shelf, res1);
-	checkIfCorrect(shelf, res2);
-	std::cout << res2 << std::endl << std::endl;
-	auto x = s.getHistory();
-	for (std::vector<std::string>::iterator it = x.begin(); it != x.end(); ++it)
-		std::cout << *it << std::endl;
+		std::cout << e.shelf << std::endl << e.beg << std::endl << e.prefix << std::endl << e.text << std::endl;
+		throw;
+	}
 	system("pause");
 }

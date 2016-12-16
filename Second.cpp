@@ -5,8 +5,15 @@ Second::Second(std::string s, bool t) : Base(s, t) {};
 
 std::string Second::sortCMYK()
 {
+	if (shelf.length() < 6)
+		return lessThanSixSort();
+
 	std::string text(shelf);
 	int quads = make_quads(text);
+	if (quads == 0)
+		return text;
+	if (text.length() == 6)
+		return sortLastSix(text, "CMYK");
 	for (int i = 0; i < quads; ++i)
 	{
 		move(text, 0);
@@ -24,6 +31,9 @@ int Second::make_quads(std::string &text)
 	for (unsigned i = 0; i < text.size(); ++i)
 		++counter[ORDER.find(text[i])];
 	int quads = *std::min_element(counter.begin(), counter.end());
+	if (text.length() == 6)
+		return quads;
+	
 	std::set<char> prev(ORDER.begin(), ORDER.end());
 	prev.erase(text[0]);
 	bool rearranged = false;

@@ -27,3 +27,14 @@ private:
 	std::vector<std::string> moves_history;
 	bool trace;
 };
+
+class MyException
+{
+public:
+	MyException(std::string s, std::string t, std::string p, std::string b) : shelf(s), text(t), prefix(p), beg(b) {};
+
+	std::string shelf;
+	std::string text;
+	std::string prefix;
+	std::string beg;
+};

@@ -71,6 +71,7 @@ std::string Robot::findPrefix(const std::string & text, int L)
 		if (counter[L] > 0)
 		{
 			tmp += ORDER[L];
+			counter[L] -= 1;
 			L += 1;
 			if (L == 4)
 			{
@@ -87,7 +88,7 @@ std::string Robot::findPrefix(const std::string & text, int L)
 
 std::string Robot::brutal(std::string & text, int L)
 {
-	std::string prefix = findPrefix(text, L);
+	std::string prefix = findPrefix(text.substr(text.length()-6), L);
 	std::unordered_map<std::string, int> memory;
 	return sortLastSix(text, prefix);
 }
