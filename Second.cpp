@@ -3,6 +3,8 @@
 
 Second::Second(std::string s, bool t) : Base(s, t) {};
 
+Second::Second(const Base * b) : Base(b){};
+
 std::string Second::sortCMYK()
 {
 	if (shelf.length() < 6)

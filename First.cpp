@@ -2,6 +2,8 @@
 
 First::First(std::string s, bool t) : Base(s, t) {};
 
+First::First(const Base * b) : Base(b){};
+
 std::string First::sortCMYK()
 {
 	if (int(shelf.size()) < 6)

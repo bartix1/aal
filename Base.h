@@ -9,10 +9,14 @@ class Base
 {
 public:
 	Base(std::string shelf, bool trace );
+	Base(const Base * b);
 	virtual ~Base() {};
 	virtual std::string sortCMYK() = 0;
 	std::vector<std::string> getHistory() const;
 	void reset(std::string);
+
+	bool isTracing() const;
+	std::string getShelf() const;
 
 protected:
 	static std::string ORDER;

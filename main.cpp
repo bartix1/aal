@@ -1,17 +1,11 @@
 #include <iostream>
-#include "First.h"
-#include <string>
-#include "Second.h"
-#include <assert.h>
-#include "Generator.h"
-#include <Python.h>
 #include <cstdlib> 
-#include <chrono>
 #include <fstream>
-#include <boost/python.hpp>
 #include <boost/program_options.hpp>
+
+#include "Diagram.h"
+
 namespace po = boost::program_options;
-namespace py = boost::python;
 
 std::string ORDER = "CMYK";
 
@@ -71,67 +65,6 @@ void checkIfCorrect(std::string shelf, std::string sorted)
 }
 
 
-#include <chrono>
-class TimeCounter
-{
-public:
-	TimeCounter(){};
-	void start_timer(){start = std::chrono::system_clock::now();};
-	void stop_timer(){end = std::chrono::system_clock::now();};
-	double getTime(){std::chrono::duration<double> elapsed_time = end-start; return elapsed_time.count();};
-private:
-	std::chrono::time_point<std::chrono::system_clock> start, end;	
-};
-
-template <class T>
-py::list toPythonList(std::vector<T> vector) {
-	typename std::vector<T>::iterator iter;
-	py::list list;
-	for (iter = vector.begin(); iter != vector.end(); ++iter) {
-		list.append(*iter);
-	}
-	return list;
-}
-
-void drawDiagram(std::vector<double> times)
-{
-	try
-	{
-		setenv("PYTHONPATH", ".", 1);
-		Py_Initialize();
-		py::object main_module = py::import("main");
-	    py::object create_f = main_module.attr("createDiagram");
-	    py::list vec = toPythonList(times);
-	    create_f(vec);
-	}
-	catch(boost::python::error_already_set e)
-	{
-		PyErr_Print();
-	}
-}
-
-template<typename ALG>
-void createDiagram()
-{
-	Generator gen;
-	TimeCounter t;
-	std::vector<double> times;
-	ALG alg("");
-	for (int i = 0; i<8000; i+=20)
-	{
-		gen.setLength(i);
-		std::string shelf = gen.generate();
-		alg.reset(shelf);
-		t.start_timer();
-		alg.sortCMYK();
-		t.stop_timer();
-		times.push_back(t.getTime());
-		if(i%1000 == 0)
-			std::cout << "Already done: " << i << "/8000" << std::endl;
-	}
-	drawDiagram(times);
-}
-
 void printHistory(std::vector<std::string> history)
 {
 	for(auto it = history.begin(); it != history.end(); ++it)
@@ -184,11 +117,17 @@ int main(int argc, char ** argv)
 	    return 1;
 	}
 
-	Base * alg;
+	Base * alg = chooseAlg(vm, false);
+
+	if(vm.count("diagram"))
+	{
+		Diagram diag(alg);
+		diag.createDiagrams();
+		return 0;
+	}
 
 	if(vm.count("file")) {
 		std::vector<std::string> to_process = readData(vm["file"].as<std::string>());
-		alg = chooseAlg(vm, false);
 		int len = to_process.size();
 		int part = len/10;
 		int j = 0;
@@ -208,12 +147,6 @@ int main(int argc, char ** argv)
 		return 0;
 	}
 
-	else if(vm.count("diagram"))
-	{
-		createDiagram<First>();
-		createDiagram<Second>();
-		return 0;
-	}
 	std::string shelf = argv[argc-1];
 
 	if(vm.count("verbose")) {

@@ -7,11 +7,14 @@ Base::Base(std::string s, bool t) : shelf(s), trace(t)
 	moves_history.push_back(s);
 }
 
+Base::Base(const Base * b) : Base(b->getShelf(), b->isTracing()){}
+
+
 std::vector<std::string> Base::getHistory() const
 {
 	return moves_history;
 }
-;
+
 
 std::string Base::sortLastSix(std::string &text, const std::string & prefix)
 {
@@ -131,3 +134,13 @@ void Base::reset(std::string s)
 	moves_history.clear();
 	moves_history.push_back(s);
 }	
+
+bool Base::isTracing() const
+{
+	return trace;
+}
+
+std::string Base::getShelf() const
+{
+	return shelf;
+}

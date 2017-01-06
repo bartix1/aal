@@ -5,6 +5,7 @@ class First : public Base
 {
 public:
 	First(std::string shelf = "", bool t = false);
+	First(const Base * b);
 	~First(){};
 	virtual std::string sortCMYK();
 

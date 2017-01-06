@@ -7,6 +7,7 @@ class Second : public Base
 {
 public:
 	Second(std::string s = "", bool t = false);
+	Second(const Base * b);
 	virtual std::string sortCMYK();
 	
 private:
