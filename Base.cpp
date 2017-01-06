@@ -16,16 +16,15 @@ std::vector<std::string> Base::getHistory() const
 std::string Base::sortLastSix(std::string &text, const std::string & prefix)
 {
 	std::unordered_map<std::string, int> memory;
-	std::vector<std::string> route;
 	std::string beg = text.substr(0, text.length() - 6);
 	std::string last_six = text.substr(text.length() - 6);
 	if(trace)
-		return sortLastSixBodyWithTrace(last_six, prefix, route, beg);
-	return sortLastSixBody(last_six, prefix, route, beg);
+		return sortLastSixBodyWithTrace(last_six, prefix, beg);
+	return sortLastSixBody(last_six, prefix, beg);
 }
 
 
-std::string Base::sortLastSixBody(std::string text, const std::string & prefix, std::vector<std::string> route, std::string beg)
+std::string Base::sortLastSixBody(std::string text, const std::string & prefix, std::string beg)
 {
 	std::unordered_map<std::string, int> memory;
 	std::deque<std::string> open_nodes;
@@ -50,7 +49,7 @@ std::string Base::sortLastSixBody(std::string text, const std::string & prefix, 
 }
 
 
-std::string Base::sortLastSixBodyWithTrace(std::string text, const std::string & prefix, std::vector<std::string> route, std::string beg)
+std::string Base::sortLastSixBodyWithTrace(std::string text, const std::string & prefix, std::string beg)
 {
 	std::unordered_map<std::string, int> memory;
 	std::deque<std::string> open_nodes;
@@ -101,12 +100,12 @@ void Base::move(std::string & text, int pos, bool valid)
 
 std::string Base::lessThanSixSort() 
 { 
-	if (shelf.length() < 4)
+	/*if (shelf.length() < 4)
 		return shelf;
 	if (shelf.length() == 4 && shelf == "CMYK")
 		return shelf;
 	if (shelf.length() == 4 && shelf != "CMYK")
-		return shelf;
+		return shelf; */
 	if (shelf.length() == 5)
 	{
 		std::string text(shelf);
@@ -122,6 +121,13 @@ std::string Base::lessThanSixSort()
 		moves_history.push_back(shelf);
 		return shelf;
 	}
+	return shelf;
 
-		
-};	
+}
+
+void Base::reset(std::string s)
+{
+	shelf = s;
+	moves_history.clear();
+	moves_history.push_back(s);
+}	

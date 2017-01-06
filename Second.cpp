@@ -40,7 +40,7 @@ int Second::make_quads(std::string &text)
 	int pos = 1;
 	while(pos < quads*4)
 	{
-		if (pos == text.length() - 6)
+		if (pos == int(text.length()) - 6)
 		{
 			arrangeTip(text, prev, pos, quads);
 			break;
@@ -71,7 +71,7 @@ void Second::arrangeTip(std::string &text, std::set<char> &prev, int pos, int qu
 	for (unsigned i = 0; i < ORDER.length(); ++i)
 		if (prev.find(ORDER[i]) != prev.end())
 			prefix += ORDER[i];
-	if (quads * 4 > pos + prefix.length())
+	if (quads * 4 > pos + int(prefix.length()))
 		prefix += "CMYK";
 	text = sortLastSix(text, prefix);
 }
@@ -81,7 +81,7 @@ bool Second::findOneElement(std::set<char> &prev, std::vector<char> &list)
 	for (auto it = list.begin(); it != list.end(); ++it)
 		if (prev.find(*it) != prev.end())
 			return true;
-		return false;
+	return false;
 }
 
 void Second::arrangeNextFours(std::string &text, int pos, std::set<char> prev)

@@ -6,18 +6,18 @@
 class Generator
 {
 public:
-	Generator(unsigned a = 25, unsigned b = 25, unsigned c = 25, unsigned d = 25, unsigned n = 100);
+	Generator(int a = 25, int b = 25, int c = 25, int d = 25, int n = 100);
 
 	std::string generate();
-	void setParams(unsigned a, unsigned b, unsigned c, unsigned d, unsigned n);
-	void setLength(unsigned n);
+	void setParams(int a, int b, int c, int d, int n);
+	void setLength(int n);
 
 private:
 	static const std::string ORDER;
-	unsigned C_prob_;
-	unsigned M_prob_;
-	unsigned Y_prob_;
-	unsigned K_prob_;
-	unsigned length;
+	int C_prob_;
+	int M_prob_;
+	int Y_prob_;
+	int K_prob_;
+	int length;
 		
 };
