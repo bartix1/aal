@@ -5,9 +5,7 @@
 class Brutal : public Base
 {
 public:
-	Brutal(std::string);
+	Brutal(std::string = "", bool = false);
 
 	virtual std::string sortCMYK();
-	std::string brutalSort(std::string text, const std::string & prefix);
-
 };

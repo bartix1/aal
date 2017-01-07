@@ -4,16 +4,17 @@
 #include <unordered_map>	
 #include <iostream>
 #include <deque>
+#include <algorithm>
 
 class Base
 {
 public:
-	Base(std::string shelf, bool trace );
+	Base(std::string shelf, bool trace = false);
 	Base(const Base * b);
 	virtual ~Base() {};
 	virtual std::string sortCMYK() = 0;
 	std::vector<std::string> getHistory() const;
-	void reset(std::string);
+	void reset(std::string, bool = false);
 
 	bool isTracing() const;
 	std::string getShelf() const;
@@ -21,16 +22,16 @@ public:
 protected:
 	static std::string ORDER;
 	std::string shelf;
+	bool trace;
 
 	std::string lessThanSixSort();
 	std::string sortLastSix(std::string &, const std::string &);
 	void move(std::string &, int, bool record = true);
+	std::string brutalSort(std::string text, const std::string &, std::string);
+	std::string brutalSortWithTrace(std::string, const std::string &, std::string);
 
 private:
-	std::string sortLastSixBody(std::string text, const std::string &, std::string);
-	std::string sortLastSixBodyWithTrace(std::string, const std::string &, std::string);
 	std::vector<std::string> moves_history;
-	bool trace;
 };
 
 class MyException
@@ -43,3 +44,5 @@ public:
 	std::string prefix;
 	std::string beg;
 };
+
+std::pair<std::string, std::vector<int>> getResult(std::string shelf);

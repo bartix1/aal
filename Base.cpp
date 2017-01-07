@@ -18,16 +18,15 @@ std::vector<std::string> Base::getHistory() const
 
 std::string Base::sortLastSix(std::string &text, const std::string & prefix)
 {
-	std::unordered_map<std::string, int> memory;
 	std::string beg = text.substr(0, text.length() - 6);
 	std::string last_six = text.substr(text.length() - 6);
 	if(trace)
-		return sortLastSixBodyWithTrace(last_six, prefix, beg);
-	return sortLastSixBody(last_six, prefix, beg);
+		return brutalSortWithTrace(last_six, prefix, beg);
+	return brutalSort(last_six, prefix, beg);
 }
 
 
-std::string Base::sortLastSixBody(std::string text, const std::string & prefix, std::string beg)
+std::string Base::brutalSort(std::string text, const std::string & prefix, std::string beg)
 {
 	std::unordered_map<std::string, int> memory;
 	std::deque<std::string> open_nodes;
@@ -42,17 +41,18 @@ std::string Base::sortLastSixBody(std::string text, const std::string & prefix, 
 			continue;
 		memory.emplace(std::make_pair(text, 0));
 		std::string tmp(text);
-		move(tmp, 0, false);
-		open_nodes.push_back(tmp);
-		tmp = text;
-		move(tmp, 1, false);
-		open_nodes.push_back(tmp);
+		for(int i = 0; i < int(text.size())-4; ++i)
+		{
+			move(tmp, i, false);
+			open_nodes.push_back(tmp);
+			tmp = text;
+		}
 	}
 	throw MyException(shelf, text, prefix, beg);
 }
 
-
-std::string Base::sortLastSixBodyWithTrace(std::string text, const std::string & prefix, std::string beg)
+#include <iostream>
+std::string Base::brutalSortWithTrace(std::string text, const std::string & prefix, std::string beg)
 {
 	std::unordered_map<std::string, int> memory;
 	std::deque<std::string> open_nodes;
@@ -77,21 +77,19 @@ std::string Base::sortLastSixBodyWithTrace(std::string text, const std::string &
 		memory.emplace(std::make_pair(text, 0));
 		std::string tmp(text);
 		std::vector<std::string> tmp_v(x);
-		move(tmp, 0, false);
-		open_nodes.push_back(tmp);
-		tmp_v.push_back(tmp);
-		routes.push_back(tmp_v);
-		tmp = text;
-		tmp_v = x;
-		move(tmp, 1, false);
-		open_nodes.push_back(tmp);
-		tmp_v.push_back(tmp);
-		routes.push_back(tmp_v);
+		for(int i = 0; i < int(text.size())-4; ++i)
+		{
+			move(tmp, i, false);
+			open_nodes.push_back(tmp);
+			tmp_v.push_back(tmp);
+			routes.push_back(tmp_v);
+			tmp = text;
+			tmp_v = x;
+		}
+
 	}
 	throw;
 }
-
-
 
 
 void Base::move(std::string & text, int pos, bool valid)
@@ -128,9 +126,10 @@ std::string Base::lessThanSixSort()
 
 }
 
-void Base::reset(std::string s)
+void Base::reset(std::string s, bool t)
 {
 	shelf = s;
+	trace = t;
 	moves_history.clear();
 	moves_history.push_back(s);
 }	
@@ -143,4 +142,21 @@ bool Base::isTracing() const
 std::string Base::getShelf() const
 {
 	return shelf;
+}
+
+
+
+std::pair<std::string, std::vector<int>> getResult(std::string shelf)
+{
+	std::string ORDER = "CMYK";
+	std::string res;
+	std::vector<int> counter(4, 0);
+	for (unsigned i = 0; i < shelf.size(); ++i)
+		++counter[ORDER.find(shelf[i])];
+	int quads = *std::min_element(counter.begin(), counter.end());
+	for (int i = 0; i < quads; ++i)
+		res += "CMYK";
+	for (int i = 0; i < 4; ++i)
+		counter[i] -= quads;
+	return std::make_pair(res, counter);
 }

@@ -4,24 +4,11 @@
 #include <boost/program_options.hpp>
 
 #include "Diagram.h"
+#include "Brutal.h"
 
 namespace po = boost::program_options;
 
 std::string ORDER = "CMYK";
-
-std::pair<std::string, std::vector<int>> getResult(std::string shelf)
-{
-	std::string res;
-	std::vector<int> counter(4, 0);
-	for (unsigned i = 0; i < shelf.size(); ++i)
-		++counter[ORDER.find(shelf[i])];
-	int quads = *std::min_element(counter.begin(), counter.end());
-	for (int i = 0; i < quads; ++i)
-		res += "CMYK";
-	for (int i = 0; i < 4; ++i)
-		counter[i] -= quads;
-	return std::make_pair(res, counter);
-}
 
 void checkIfCorrect(std::string shelf, std::string sorted)
 {
@@ -72,13 +59,17 @@ void printHistory(std::vector<std::string> history)
 }
 
 
-Base * chooseAlg(po::variables_map vm, bool h)
+Base * chooseAlg(int alg_num, bool h)
 {
-	if (vm["algorithm"].as<int>() == 1)
-		return new First("", h);
-	if (vm["algorithm"].as<int>() == 2)
-		return new Second("", h);
-	throw;
+	switch(alg_num)
+	{
+		case 2: 
+			return new Second("", h);
+		case 3:
+			return new Brutal("", h);
+		default:
+			return new First("", h);
+	}
 }
 
 std::vector<std::string> readData(std::string f_name)
@@ -99,13 +90,14 @@ std::vector<std::string> readData(std::string f_name)
 
 int main(int argc, char ** argv)
 {
+	int alg_num;
 	po::options_description desc("Allowed options");
 	desc.add_options()
-	    ("help", "produce help message")
-	    ("file", po::value<std::string>(), "import data from file")
-	    ("diagram", "create time diagram")
-	    ("verbose", "show all steps")
-	    ("algorithm", po::value<int>(), "choose algorithm")
+	    ("help,h", "produce help message")
+	    ("file,f", po::value<std::string>(), "import data from file")
+	    ("diagram,d", "create time diagram (only 1 and 2 algorithm)")
+	    ("verbose,v", "show all steps")
+	    ("algorithm,a", po::value<int>(&alg_num)->default_value(1), "choose algorithm - default 1")
 	;
 
 	po::variables_map vm;
@@ -117,12 +109,13 @@ int main(int argc, char ** argv)
 	    return 1;
 	}
 
-	Base * alg = chooseAlg(vm, false);
+	Base * alg = chooseAlg(alg_num, false);
 
 	if(vm.count("diagram"))
 	{
 		Diagram diag(alg);
 		diag.createDiagrams();
+		delete alg;
 		return 0;
 	}
 
@@ -150,15 +143,13 @@ int main(int argc, char ** argv)
 	std::string shelf = argv[argc-1];
 
 	if(vm.count("verbose")) {
-		alg = chooseAlg(vm, true);
-		alg->reset(shelf);
+		alg->reset(shelf, true);
 		alg->sortCMYK();
  		printHistory(alg->getHistory());
 	}
 
 	else
 	{
-		alg = chooseAlg(vm, false);
 		alg->reset(shelf);
 		std::string result = alg->sortCMYK();
 		std::cout << result << std::endl;
