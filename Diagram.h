@@ -22,7 +22,7 @@ public:
 	~Diagram();
 	void createDiagrams();
 private:
-	void drawDiagram(std::vector<std::pair<int, double>>& times);
+	void drawDiagram(std::vector<std::pair<int, double>>& times, std::string y = "time");
 	double asymptotic_time_n_2(int x);
 	double asymptotic_time_n_logn(int x);
 	void createAsymptoticDiagram(double (Diagram::*time_fun)(int));

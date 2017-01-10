@@ -28,7 +28,7 @@ Diagram::~Diagram()
 }
 
 
-void Diagram::drawDiagram(std::vector<std::pair<int, double>>& times)
+void Diagram::drawDiagram(std::vector<std::pair<int, double>>& times, std::string y)
 {
 	try
 	{
@@ -37,7 +37,7 @@ void Diagram::drawDiagram(std::vector<std::pair<int, double>>& times)
 		py::object main_module = py::import("main");
 	    py::object create_f = main_module.attr("createDiagram");
 	    py::list vec = toPythonList(times);
-	    create_f(vec);
+	    create_f(vec, y);
 	}
 	catch(boost::python::error_already_set e)
 	{
@@ -61,9 +61,10 @@ double Diagram::asymptotic_time_n_2(int x)
 	TimeCounter t;
 	t.start_timer();
 	for(int i = 0; i < x; ++i)
-		for(int j = 0; j < x; ++j);
+		for(int j = 0; j < x; ++j)
+			for(int k = 0; k < log(x); ++k);
 	t.stop_timer();
-	return t.getTime()*12;
+	return t.getTime()/10;
 }
 
 
@@ -118,5 +119,5 @@ void Diagram::createAsymptoticDiagram(double (Diagram::*time_fun)(int))
 		if(i%1000 == 0)
 			std::cout << "Already done: " << i << "/3000" << std::endl;
 	}
-	drawDiagram(times);
+	drawDiagram(times, "ratio");
 }

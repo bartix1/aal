@@ -35,7 +35,7 @@ std::string Generator::generate()
 		{
 			x -= nums[j];
 			++j;
-		} while (x > 0);
+		} while (x >= 0);
 		result += ORDER[j-1];
 	}
 	return result;

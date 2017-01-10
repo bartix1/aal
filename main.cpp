@@ -120,10 +120,14 @@ int main(int argc, char ** argv)
 	}
 
 	if(vm.count("file")) {
+		TimeCounter tc;
 		std::vector<std::string> to_process = readData(vm["file"].as<std::string>());
+		if(to_process.empty())
+			return 1;
 		int len = to_process.size();
 		int part = len/10;
 		int j = 0;
+		tc.start_timer();
 		for(auto i = to_process.begin(); i != to_process.end(); ++i)
 			{
 				alg->reset(*i);
@@ -135,7 +139,9 @@ int main(int argc, char ** argv)
 				}
 				++j;
 			}
+		tc.stop_timer();
 		std::cout << "ALL TESTS PASSED" << std::endl;
+		std::cout << "completed in: " << tc.getTime() << std::endl;
 		delete alg;
 		return 0;
 	}
