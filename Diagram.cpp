@@ -1,5 +1,13 @@
 #include "Diagram.h"
 
+double avg(const std::vector<double> & times)
+{
+	double sum = 0;
+	for(auto it : times)
+		sum += it;
+	return sum/times.size();
+}
+
 template <typename X, typename Y>
 py::list toPythonList(std::vector<std::pair<X, Y>> vector) {
 	typename std::vector<std::pair<X, Y>>::iterator iter;
@@ -45,38 +53,87 @@ void Diagram::drawDiagram(std::vector<std::pair<int, double>>& times, std::strin
 	}
 }
 
+std::pair<int, int> Diagram::getMedians(int i, int (Diagram::*time_fun)(int))
+{
+	int asympt_med = (this->*time_fun)(i);
+	return std::make_pair(i, asympt_med);
+}
+
+#include <iostream>
+void Diagram::makeTable(int (Diagram::*time_fun)(int))
+{
+	Generator gen;
+	TimeCounter t;
+	int start, end, step, med;
+	double median, med_asympt, result;
+	std::vector<std::pair<int, double>> times;
+	if(typeid(*algorithm) == typeid(First))
+	{
+		start = step = 500;
+		end = 5000;
+		med = 2500;
+	}
+	else
+	{
+		start = step = 1000;
+		end = 10000;
+		med = 5000;
+	}
+
+	for (int i = start; i< end; i+=step)
+	{
+		gen.setLength(i);
+		std::vector<double> results;
+		for (int j = 0; j < 10; ++j)
+		{
+			std::string shelf = gen.generate();
+			algorithm->reset(shelf);
+			t.start_timer();
+			algorithm->sortCMYK();
+			t.stop_timer();
+			results.push_back(t.getTime());
+		}
+		result = avg(results);
+		times.push_back(std::make_pair(i, result));
+		if(i == med)
+		{
+			median = result;
+			med_asympt = (this->*time_fun)(i);
+		}
+
+	}
+	for (auto it : times)
+		std::cout << it.first << " " << it.second << " " 
+		<< (it.second * med_asympt) / (median * (this->*time_fun)(it.first)) << std::endl;
+}
+
+
+
 void Diagram::createDiagrams()
 {
-	createTimesDiagram();
+	//createTimesDiagram();
 	if (typeid(*algorithm) == typeid(First))
-		createAsymptoticDiagram(&Diagram::asymptotic_time_n_2);
+	{
+		//createAsymptoticDiagram(&Diagram::asymptotic_time_n_2);
+		makeTable(&Diagram::asymptotic_time_n_2);
+	}
 	else
-		createAsymptoticDiagram(&Diagram::asymptotic_time_n_logn);
+	{
+		//createAsymptoticDiagram(&Diagram::asymptotic_time_n_logn);
+		makeTable(&Diagram::asymptotic_time_n_logn);
+	}
 }
 
 
-double Diagram::asymptotic_time_n_2(int x)
+int Diagram::asymptotic_time_n_2(int n)
 {
-	// n^2 * 10
-	TimeCounter t;
-	t.start_timer();
-	for(int i = 0; i < x; ++i)
-		for(int j = 0; j < x; ++j)
-			for(int k = 0; k < log(x); ++k);
-	t.stop_timer();
-	return t.getTime()/10;
+	return n*n*log(n);
 }
 
 
-double Diagram::asymptotic_time_n_logn(int x)
+int Diagram::asymptotic_time_n_logn(int n)
 {
-	// n* log(n) * 100
-	TimeCounter t;
-	t.start_timer();
-	for(int i = 0; i < x; ++i)
-		for(int j = 0; j < log(x); ++j);
-	t.stop_timer();
-	return t.getTime()*100;
+	return n*log(log(n));
 }
 
 
@@ -100,24 +157,38 @@ void Diagram::createTimesDiagram()
 	drawDiagram(times);
 }
 
-
-void Diagram::createAsymptoticDiagram(double (Diagram::*time_fun)(int))
+void Diagram::createAsymptoticDiagram(int (Diagram::*time_fun)(int))
 {
 	Generator gen;
 	TimeCounter t;
 	std::vector<std::pair<int, double>> times;
-	for (int i = 100; i<3000; i+=20)
+	double median, result = 0;
+	int med_asympt;
+	for (int i = 800; i<3800; i+=50)
 	{
+		std::vector<double> results;
 		gen.setLength(i);
-		std::string shelf = gen.generate();
-		algorithm->reset(shelf);
-		t.start_timer();
-		algorithm->sortCMYK();
-		t.stop_timer();
-		double asympt = (this->*time_fun)(i);
-		times.push_back(std::make_pair(i, t.getTime()/asympt));
+		for (int j = 0; j < 10; ++j)
+		{
+			std::string shelf = gen.generate();
+			algorithm->reset(shelf);
+			t.start_timer();
+			algorithm->sortCMYK();
+			t.stop_timer();
+			results.push_back(t.getTime());
+		}
+		result = avg(results);
+		times.push_back(std::make_pair(i, result));
 		if(i%1000 == 0)
-			std::cout << "Already done: " << i << "/3000" << std::endl;
+			std::cout << "Already done: " << i << "/4000" << std::endl;
+		if(i == 2300)
+		{
+			median = result;
+			med_asympt = (this->*time_fun)(i);
+		}
 	}
+	for (auto it = times.begin(); it < times.end(); ++it)
+		(*it).second = ((*it).second * med_asympt) / (median * (this->*time_fun)((*it).first));
+
 	drawDiagram(times, "ratio");
 }

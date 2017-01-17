@@ -10,7 +10,7 @@
 #include <boost/python.hpp>
 #include <Python.h>
 #include <typeinfo>
-
+#include <tuple>
 
 
 namespace py = boost::python;
@@ -23,10 +23,12 @@ public:
 	void createDiagrams();
 private:
 	void drawDiagram(std::vector<std::pair<int, double>>& times, std::string y = "time");
-	double asymptotic_time_n_2(int x);
-	double asymptotic_time_n_logn(int x);
-	void createAsymptoticDiagram(double (Diagram::*time_fun)(int));
+	int asymptotic_time_n_2(int x);
+	int asymptotic_time_n_logn(int x);
+	void createAsymptoticDiagram(int (Diagram::*time_fun)(int));
 	void createTimesDiagram();
+	void makeTable(int (Diagram::*time_fun)(int));
+	std::pair<int, int> getMedians(int i, int (Diagram::*time_fun)(int));
 
 	Base * algorithm;
 };

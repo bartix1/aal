@@ -70,6 +70,7 @@ std::string Base::brutalSortWithTrace(std::string text, const std::string & pref
 		{
 			for (auto it = ++x.begin(); it != x.end(); ++it)
 				moves_history.push_back(beg + *it);
+
 			return beg + text;
 		}
 		if (memory.find(text) != memory.end())
@@ -81,7 +82,7 @@ std::string Base::brutalSortWithTrace(std::string text, const std::string & pref
 		{
 			move(tmp, i, false);
 			open_nodes.push_back(tmp);
-			tmp_v.push_back(tmp);
+			tmp_v.push_back(tmp.substr(0, i) + " | " + tmp.substr(i));
 			routes.push_back(tmp_v);
 			tmp = text;
 			tmp_v = x;
@@ -96,17 +97,17 @@ void Base::move(std::string & text, int pos, bool valid)
 {
 	text = text.substr(0, pos) + text.substr(pos + 4) + text.substr(pos, 4);
 	if (trace && valid)
+	{
+		std::string s = moves_history.back();
+		moves_history.pop_back();
+		s = s.substr(0, pos) + " | " + s.substr(pos);
+		moves_history.push_back(s);
 		moves_history.push_back(text);
+	}
 }
 
 std::string Base::lessThanSixSort() 
 { 
-	/*if (shelf.length() < 4)
-		return shelf;
-	if (shelf.length() == 4 && shelf == "CMYK")
-		return shelf;
-	if (shelf.length() == 4 && shelf != "CMYK")
-		return shelf; */
 	if (shelf.length() == 5)
 	{
 		std::string text(shelf);
