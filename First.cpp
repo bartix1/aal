@@ -24,7 +24,10 @@ std::string First::sortCMYK()
 		else
 			loopNearEnd(text, pos, L, x);
 	}
-	return brutal(text, L);
+	text = brutal(text, L);
+	if(trace)
+		moves_history.push_back(text);
+	return text;
 }
 
 void First::takeFewFours(std::string & text, int &pos, int &L, int count)

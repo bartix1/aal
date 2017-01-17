@@ -24,6 +24,8 @@ std::string Second::sortCMYK()
 	}
 	while (text.substr(0, 4) != "CMYK")
 		move(text, 0);
+	if(trace)
+		moves_history.push_back(text);
 	return text;
 }
 

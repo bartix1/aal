@@ -22,6 +22,7 @@ public:
 protected:
 	static std::string ORDER;
 	std::string shelf;
+	std::vector<std::string> moves_history;
 	bool trace;
 
 	std::string lessThanSixSort();
@@ -29,9 +30,6 @@ protected:
 	void move(std::string &, int, bool record = true);
 	std::string brutalSort(std::string text, const std::string &, std::string);
 	std::string brutalSortWithTrace(std::string, const std::string &, std::string);
-
-private:
-	std::vector<std::string> moves_history;
 };
 
 class MyException
